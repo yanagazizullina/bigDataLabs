@@ -10,17 +10,24 @@ object Main {
   def main(args: Array[String]) {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     Logger.getLogger("org.spark-project").setLevel(Level.WARN)
-    val cfg = new SparkConf().setAppName("Test").setMaster("local[2]")
-    val sc = new SparkContext(cfg)
+    //val cfg = new SparkConf().setAppName("Test").setMaster("local[2]")
+    //val sc = new SparkContext(cfg)
     //val textFile = sc.textFile("file:///C:/Users/YNLKTK/Documents/список продуктов.txt")
     //textFile.foreach(println)
     //sc.stop()
 
-    val tripData = sc.textFile("file:///C:/Users/YNLKTK/Documents/big_data/data/trips.csv")
+    val Seq(masterURL, tripDataPath, stationDataPath) = args.toSeq
+    val cfg = new
+        SparkConf().setAppName("Test").setMaster(masterURL)
+    val sc = new SparkContext(cfg)
+    val tripData = sc.textFile(tripDataPath)
+    val stationData = sc.textFile(stationDataPath)
+
+    //val tripData = sc.textFile("file:///C:/Users/YNLKTK/Documents/big_data/data/trips.csv")
     // запомним заголовок, чтобы затем его исключить
     val tripsHeader = tripData.first
     val trips = tripData.filter(row=>row!=tripsHeader).map(row=>row.split(",",-1))
-    val stationData = sc.textFile("file:///C:/Users/YNLKTK/Documents/big_data/data/stations.csv")
+    //val stationData = sc.textFile("file:///C:/Users/YNLKTK/Documents/big_data/data/stations.csv")
     val stationsHeader = stationData.first
     val stations = stationData.filter(row=>row!=stationsHeader).map(row=>row.split(",",-1))
     //println("Headers")
